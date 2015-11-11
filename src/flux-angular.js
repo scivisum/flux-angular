@@ -58,11 +58,31 @@ var createStore = function (name, spec, maxListeners, flux) {
     this.emit('change');
   };
 
+  Store.prototype.state = {};
+  
   // Attach store definition to the prototype
   Object.keys(spec).forEach(function (key) {
     Store.prototype[key] = spec[key];
   });
-
+  
+  // Convenience functions for creating properties which return data from the  stores state
+  Store.prototype.defineStateProperty = function(obj, name) {
+    Object.defineProperty(obj, name, {
+        get: function () {
+            return this.state[name];
+        },
+        enumerable: true
+    });
+  };
+  Store.prototype.defineProperty = function(obj, name, ref) {
+      Object.defineProperty(obj, name, {
+          get: function () {
+              return ref[name];
+          },
+          enumerable: true
+      });
+  };
+  
   return Store;
 
 };
